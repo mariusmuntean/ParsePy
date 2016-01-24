@@ -16,6 +16,8 @@ from six.moves.urllib.error import HTTPError
 from six.moves.urllib.parse import urlencode
 
 import json
+import urllib.request
+import urllib.parse
 
 from parse_rest import core
 
@@ -108,7 +110,10 @@ class ParseBase(object):
             url += '?%s' % urlencode(kw)
             data = None
         else:
-            data = data
+            if type(data) == str:
+                data = data.encode('utf-8')
+            else:
+                data = data
 
         headers = {
             'Content-type': 'application/json',
@@ -117,7 +122,7 @@ class ParseBase(object):
         }
         headers.update(extra_headers or {})
 
-        request = Request(url.encode('utf-8'), data, headers)
+        request = Request(url, data, headers)
         
         if ACCESS_KEYS.get('session_token'):
             request.add_header('X-Parse-Session-Token', ACCESS_KEYS.get('session_token'))
